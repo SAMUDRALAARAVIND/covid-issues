@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pincode API</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@300&display=swap" rel="stylesheet">
+<style type="text/css">
+	.issue{
+		background-color: white;
+		padding:20px;
+		border-radius:2%;
+		
+	}
+	*{
+		font-size:10px;
+	}
+	.date{
+		font-weight: italic;
+		float:right;
+	}
+</style>
+</head>
+<body style="background-color: #e7e7e7;font-family: 'IBM Plex Serif', serif;">
+		<div class="container" style="margin-top:10%">
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6">
+					<a href="/" class="btn btn-primary btn-block">Post your issue</a><br>
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+			<% for(var i=0;i<file.length;i++) {%>
+			<div class="row">
+			  <div class="col-sm-3"></div>
+				<div class="col-sm-6">
+				<div class="issue">
+					<span style="font-weight: bold;"><%= file[i].name %></span>       <span class="date"><%= file[i].date %></span><br><br>
+					<p><%= file[i].issue %></p>
+				</div>
+		     	</div>
+			  <div class="col-sm-3"></div>
+		    </div>
+			<br>
+			<% } %>
+		</div>
+</body>
+</html>
