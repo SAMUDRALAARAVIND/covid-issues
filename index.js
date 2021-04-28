@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
-app.use("views","views")
-app.use("view engine","ejs")
+app.set("views","views")
+app.set("view engine","ejs")
 
 const port = process.env.PORT || 8080
 
