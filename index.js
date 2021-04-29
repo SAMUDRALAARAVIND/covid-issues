@@ -48,3 +48,7 @@ app.post("/",(req,resp)=>{
 app.get("/all/issues",(req,resp)=>{
 	resp.render("all",{file:file})
 })
+
+app.get("/getdata",(req,resp)=>{
+	resp.json(file)
+})
