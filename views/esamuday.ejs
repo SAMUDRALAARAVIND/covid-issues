@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 issues panel</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body>
+      <div class="container" style="background-color:#e7e7e7;padding:100px">
+            <div class="row">
+              <div class="col-sm-6" style="background-color:aqua">
+              
+              <label>Category</label>
+              <select name="cat" id="cat" class="form-control" width="200">
+                  <option value="Fruit">Fruits</option>
+                  <option value="Vegetables">Vegetables</option>
+              </select>
+            
+              
+              <label>Sub Category</label>
+              <select name="sub" id="sub" class="form-control">
+                  <option value="seasonal">Seasonal</option>
+                  <option value="allyear">All year</option>
+              </select>
+             
+              
+                  <label>Product</label>
+                  <select name="product" id="product" class="form-control">
+                      <option value="Mango">Mango</option>
+                      <option value="Pineapple">Pineapple</option>
+                  </select>
+              <br><br>
+              <button type="submit" class="btn btn-primary btn-block" onclick="getprice()">GET PRICE</button>
+              <div id="demo" class="container" style="padding:30px;background-color:lightblue">
+                    price:<b id="price"></b>
+              </div>
+             </div>
+             <!-- Add things -->
+             <div class="col-sm-6" style="background-color: aqua">
+                  <div>
+                      <label>Add Product</label>
+                      <input type="text" id="cat1" class="form-control" placeholder="Cateory" ><br>
+                      <input type="text" id="sub1" class="form-control" placeholder="Sub-Category"><br>
+                      <input type="text" id="procuct1" class="form-control" placeholder="Product Name"><br>
+                      <input type="text" id="price1" class="form-control" placeholder="Price"><br>
+                      <button onclick="addproduct()" class="btn btn-danger btn-block" id="add" disabled>Add Product</button>
+                  </div>
+                  <div id="demo" class="container" style="padding:19px;background-color:lightblue">
+                    status:<b id="status"></b>
+              </div>
+             </div><br><br>
+             <!-- add things -->
+             <div class="container" style="background-color: rgb(237, 195, 97);margin-top:50px;padding:50px">
+                 <button class="btn btn-primary btn-block" onclick="getall()">get all products</button>
+                 <p id="all" style="color:black"></p>
+             </div>
+             </div>
+      </div>
+      <script>
+        var vegetables = ["Leafy","Essentials","nonleafy"];
+        var fruits = ["seasonal","allyear"];
+        //$("#add").prop('disabled',false);
+          function corrector(){
+            var x = $("#cat1").val();
+            var y = $("#sub1").val();
+            var a = $("#product1").val();
+            var b = $("#price1").val();
+             if(x!="" && y!="" && a!="" && b!=""){
+                $("#add").prop('disabled',false);
+             }
+          }
+          $("#cat1").keyup(()=>{
+              corrector();
+          });
+          $("#sub1").keyup(()=>{
+              corrector();
+          });
+          $("#product1").keyup(()=>{
+              corrector(); 
+          });
+          $("#price1").keyup(()=>{
+              corrector(); 
+          });
+          
+          $("#cat").change(()=>{
+                if($("#cat").val() == "Vegetables"){
+                
+                    $("#sub").html("");
+                    $("#sub").append(`<option value='${vegetables[0]}'>${vegetables[0]}</option>`);
+                    $("#sub").append(`<option value='${vegetables[1]}'>${vegetables[1]}</option>`);
+                    $("#sub").append(`<option value='${vegetables[2]}'>${vegetables[2]}</option>`);
+                }
+                else{
+                    $("#sub").html("");
+                    $("#sub").append(`<option value='${fruits[0]}'>${fruits[0]}</option>`);
+                     $("#sub").append(`<option value='${fruits[1]}'>${fruits[1]}</option>`);
+                }
+          });
+
+
+          $("#sub").change(()=>{
+            var data ={
+                sub:$("#sub").val(),
+                cat:$("#cat").val()
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.onload = ()=>{
+                //console.log(this.status,"  ",this.readyState)
+                if(xhr.status == 200 && xhr.readyState == 4){
+                    $("#product").html("");
+                    var list = JSON.parse(xhr.response);
+                    list = list.data ;
+                    for(var i=0;i<list.length;i++)
+                        $("#product").append(`<option value='${list[i]}'>${list[i]}</option>`);
+                }
+            };
+            xhr.onerror = ()=>{
+                console.log("errior occured");
+            }
+            xhr.open("POST","/products",true);
+            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.send(`sub=${data.sub}&cat=${data.cat}`);
+        });
+
+
+
+        function getprice(){
+            var xhr = new XMLHttpRequest();
+            xhr.onload = ()=>{
+                if(xhr.status == 200 && xhr.readyState == 4){
+                    var data = JSON.parse(xhr.response);
+                   
+                    $("#price").html(data.price);
+                }
+            };
+            var data = {
+                sub:$("#sub").val(),
+                cat:$("#cat").val(),
+                product:$("#product").val()
+            };
+            xhr.open("POST","/esamuday/getprice",true);
+            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.send(`sub=${data.sub}&cat=${data.cat}&product=${data.product}`);
+        }
+
+        function addproduct(){
+            var data = {
+                sub:$("#sub1").val(),
+                cat:$("#cat1").val(),
+                product:$("#product1").val(),
+                price:$("#price1").val()
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.onload =()=>{
+                if(xhr.status==200 && xhr.readyState==4){
+                    console.log("came");
+                    $("#status").html(xhr.responseText);
+                }
+            }
+            xhr.onerror = ()=>{
+                console.log("An error occured");
+            }
+            xhr.open("POST","/esamuday/addproduct",true);
+            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.send(`sub=${data.sub}&cat=${data.cat}&product=${data.product}&price=${data.price}`);
+        }
+
+        function getall(){
+            var xhr = new XMLHttpRequest();
+            xhr.onload = ()=>{
+                if(xhr.status == 200 && xhr.readyState == 4){
+                    $("#all").html("");
+                    $("#all").html(`${xhr.responseText}`);
+                }
+            }
+            xhr.open("POST","/esamuday/all",true);
+            // xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.send();
+        }
+      </script>
+</body>
+</html>
